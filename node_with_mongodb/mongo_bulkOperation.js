@@ -1,26 +1,17 @@
-const MongoClient = require("mongodb").MongoClient;
-
-const connect_mongoDB = async () => {
-  let mongodb_uri = "mongodb://127.0.0.1/";
-  let db = null;
-  try {
-    db = await MongoClient.connect(mongodb_uri);
-    console.log("mongodb connected successfully");
-  } catch (error) {
-    console.log("error in mongo connection.", error);
-  }
-  return db;
-};
+const { connect_mongoDB } = require("./mongo_connection");
 
 const bulk_operation = async () => {
   const connDbInstance = await connect_mongoDB();
   try {
-    let database = connDbInstance.db("movie_flix");
-    let collection = database.collection("theaters");
+    let database = connDbInstance.db("bulkOp_db");
+    let collection = database.collection("bulkOp_coll_1");
     const bulkOp = await collection.bulkWrite([
       {
         insertOne: {
           document: {
+            name: "rahul chaudhary",
+            role: "python",
+            salary: 40000,
             location: {
               address: {
                 street1: "5 Main St.",
@@ -35,6 +26,60 @@ const bulk_operation = async () => {
       {
         insertOne: {
           document: {
+            name: "gopal kumar",
+            role: "nodejs",
+            salary: 45000,
+            location: {
+              address: {
+                street1: "5 Main St.",
+                city: "new jersy",
+                state: "AK",
+                zipcode: "44432",
+              },
+            },
+          },
+        },
+      },
+      {
+        insertOne: {
+          document: {
+            name: "gautam",
+            role: "Angular",
+            salary: 55000,
+            location: {
+              address: {
+                street1: "ln3 road",
+                city: "new jersy",
+                state: "4k",
+                zipcode: "45432",
+              },
+            },
+          },
+        },
+      },
+      {
+        insertOne: {
+          document: {
+            name: "amit yadav",
+            role: "Angular",
+            salary: 50000,
+            location: {
+              address: {
+                street1: "ln7 road",
+                city: "Washington",
+                state: "1k",
+                zipcode: "44633",
+              },
+            },
+          },
+        },
+      },
+      {
+        insertOne: {
+          document: {
+            name: "ashish chaube",
+            role: "nodejs",
+            salary: 30000,
             location: {
               address: {
                 street1: "75 tenn Plaza",
@@ -47,8 +92,26 @@ const bulk_operation = async () => {
         },
       },
       {
+        insertOne: {
+          document: {
+            name: "durgesh mishra",
+            role: "python",
+            salary: 50000,
+            location: {
+              address: {
+                street1: "75 tenn Plaza",
+                city: "california",
+                state: "NY",
+                zipcode: "10001",
+              },
+            },
+          },
+        },
+      },
+
+      {
         updateMany: {
-          filter: { "location.address.city": "new gini" },
+          filter: { "location.address.city": "new jersy" },
           update: { $set: { is_in_ohio: true } },
           upsert: true,
         },
