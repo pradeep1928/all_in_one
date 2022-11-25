@@ -11,7 +11,8 @@ const aggregate_Op = async () => {
             // { $match: { "salary": 50000 } },
             // { $unwind: "$location" },
             { $group: { _id: "$role", count: { $sum: 1 } } },
-            // { $project: { _id: 0, name: "$_id", count: "$count"}}
+            // { $project: { _id: 0, name: "$_id", count: "$count"}},
+            { $sort: { count: -1}}
         ]
         
         const aggrResult = await collection.aggregate(pipeline).toArray() ;
