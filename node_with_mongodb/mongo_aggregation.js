@@ -8,17 +8,17 @@ const aggregate_Op = async () => {
         let collection = database.collection("bulkOp_coll_1");
 
         const pipeline = [
-            // { $match: { "salary": 50000 } },
-            // { $unwind: "$location" },
-            { $group: { _id: "$role", count: { $sum: 1 } } },
-            // { $project: { _id: 0, name: "$_id", count: "$count"}},
-            { $sort: { count: -1}}
+            { $match: { $expr: { $gte : [ "salary", 30000 ]} }},
+            { "$unwind": "$location" },
+            { $group: { _id: {"role": "$role", "name": "$name" }, count: { $sum: 1 } }},
+            // { $project: { _id: 0, name: "$name", language: "$_id", count: "$count", salary: "$salary"}},
+            // { $sort: { _id: 1 } }
         ]
-        
-        const aggrResult = await collection.aggregate(pipeline).toArray() ;
+
+        const aggrResult = await collection.aggregate(pipeline).toArray();
         console.log("aggrResult------ ", aggrResult)
     } catch (error) {
-        console.log("error in dbInstance or bulk operation", error);
+        console.log("error in connDbInstance or bulk operation", error);
     } finally {
         await connDbInstance.close();
     }
