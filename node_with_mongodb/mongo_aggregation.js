@@ -2,7 +2,7 @@ const { connect_mongoDB } = require("./mongo_connection");
 
 
 const aggregate_Op = async () => {
-    const connDbInstance = await connect_mongoDB();
+    let connDbInstance = await connect_mongoDB();
     try {
         let database = connDbInstance.db("bulkOp_db");
         let collection = database.collection("bulkOp_coll_1");

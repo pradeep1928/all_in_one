@@ -2,7 +2,13 @@ const reader = require('xlsx')
 const mysql = require("mysql2");
 const moment = require('moment');
 const MongoClient = require("mongodb").MongoClient;
-const generate = require('./demoDump')
+// const generate = require('./demoDump')
+
+// *** dumy data *** 
+let dumpData = [
+    {name: 'riya', role: "teacher", location: 'mumbai', salary: 58000},
+    // {name: 'durgesh', role: "data science", location: 'bhopal'}
+]
 
 // *** mongodb connection ***
 const connetDb = async () => {
@@ -19,14 +25,14 @@ const connetDb = async () => {
 
 const insertTomongodb = async (dataM) => {
     const dbInstance = await connetDb();
-    const dbCol = dbInstance.db('helo_prime').collection('api_mobile');
+    const dbCol = dbInstance.db('pradeep_testDB').collection('testCol');
     let resutl = await dbCol.insertMany(dataM)
     console.log("mongo insert result: ", resutl)
 }
 
-let mongo_data = generate.generateDump()
-console.log("mongo_data", mongo_data)
-insertTomongodb(mongo_data)
+// let mongo_data = generate.generateDump()
+// console.log("mongo_data", mongo_data)
+insertTomongodb(dumpData)
 
 
 // *** mysql dbconfig ***
@@ -70,8 +76,8 @@ const insertDataMysql = (data) => {
 
 
 // *** reading data from xlsx file and inserting data to mysql database *** 
-const file = reader.readFileSync('./camp_info.xlsx')
-const sheets = file.SheetNames
+// const file = reader.readFileSync('./camp_info.xlsx')
+// const sheets = file.SheetNames
 
 const readXlFile = () => {
     let rowarr = [];
