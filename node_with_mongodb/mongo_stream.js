@@ -13,10 +13,15 @@ const streamWithMongodb = async () => {
               $match: {"fullDocument.salary": { $gte: 60000 } }
             } ];
 
-         let changeStream = collection.watch({fullDocument: "updateLookup"});
+         let changeStream = database.watch({fullDocument: "updateLookup"});
          changeStream.on('change', (doc) => {
             //  console.log("updated salary document: ", doc.fullDocument.salary);
-             console.log("updated document: ", doc);
+            let salary = doc.fullDocument.salary;
+            let name = doc.fullDocument.name
+            if (name == 'pradeep' && salary >= 80000) {
+                console.log("good salary:", salary);
+            }
+            //  console.log("updated document: ", doc);
 
          })
     } catch (error) {
