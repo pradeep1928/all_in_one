@@ -18,8 +18,8 @@ const streamWithMongodb = async () => {
             //  console.log("updated salary document: ", doc.fullDocument.salary);
             let salary = doc.fullDocument.salary;
             let name = doc.fullDocument.name
-            if (name == 'pradeep' && salary >= 80000) {
-                console.log("good salary:", salary);
+            if (salary >= 90000) {
+                console.log("handsome salary:", salary);
             }
             //  console.log("updated document: ", doc);
 
