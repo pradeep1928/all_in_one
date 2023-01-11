@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time data updating - Web Socket</title>
+</head>
+<body>
+    <h2>Real-time data updating - Web Socket</h2>
+    <div id="updates"></div>
+
+    <script type="text/javascript">
+        const connection = new WebSocket('ws://localhost:3002')
+        connection.onmessage = e => {
+            document.getElementById('updates').innerHTML = document.getElementById('updates').innerHTML + "Received: "+e.data+"</br>";
+        }
+    </script>
+</body>
+</html>
