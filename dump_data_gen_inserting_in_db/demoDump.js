@@ -1,15 +1,21 @@
+const { parse } = require("json2csv");
+const xlsx = require('xlsx')
+const fs = require('fs')
+
+
+
 function randStr(length) {
-    let strresult           = '';
-    let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let strresult = '';
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let charactersLength = characters.length;
-    for ( let i = 0; i < length; i++ ) {
+    for (let i = 0; i < length; i++) {
         strresult += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return strresult;
 }
 
 const randNum = (num) => {
-    const numresult =  Math.floor(Math.random() * num )
+    const numresult = Math.floor(Math.random() * num)
     return numresult
 }
 
@@ -17,10 +23,11 @@ console.log(randStr(15));
 console.log(randNum(10));
 
 const generateDump = () => {
+    let demoArr = []
     let demoMysqlArr = [];
     let demoMongoArr = [];
-    
-    for (let i = 0; i < 10; i++) {
+
+    for (let i = 0; i < 100000; i++) {
         let demoObj = {}
         // *** api_mobile_list ***
         // demoObj.camp_id = randNum(1000000);
@@ -87,33 +94,65 @@ const generateDump = () => {
         // demoObj.flash_message = carr2[Math.floor(Math.random() * carr2.length)];
 
         // *** for mongoDb *** 
-        let arrM = ['english', 'marathi']
-        demoObj.messageid = randStr(30)
-        demoObj.mobileno = randStr(50)
-        demoObj.content_type = arrM[Math.floor(Math.random() * arrM.length)];
-        demoObj.credits = randNum(10)
-        demoObj.error_code = randNum(10)
-        demoObj.handset_delivery_time = randStr(10)
-        demoObj.message = randStr(50)
-        demoObj.message_category = randStr(8)
-        demoObj.operator_delivery_time = randStr(10)
-        demoObj.received_time = randStr(10)
-        demoObj.senderid = randStr(6)
-        demoObj.status = randStr(12)
-        demoObj.templateid = randNum(10000000000)
-        demoObj.username = randStr(15)
-    
-        demoMysqlArr.push(demoObj)
+        // let arrM = ['english', 'marathi']
+        // demoObj.messageid = randStr(30)
+        // demoObj.mobileno = randNum(9999999999)
+        // demoObj.content_type = arrM[Math.floor(Math.random() * arrM.length)];
+        // demoObj.credits = randNum(10)
+        // demoObj.error_code = randNum(10)
+        // demoObj.handset_delivery_time = randStr(10)
+        // demoObj.message = randStr(50)
+        // demoObj.message_category = randStr(8)
+        // demoObj.operator_delivery_time = randStr(10)
+        // demoObj.received_time = randStr(10)
+        // demoObj.senderid = randStr(6)
+        // demoObj.status = randStr(12)
+        // demoObj.templateid = randNum(10000000000)
+        // demoObj.username = randStr(15)
+
+        // *** sms-ctrl xlsx file
+        demoObj.Mobile = randNum(9999999999)
+        demoObj.var1 = randStr(8)
+        demoObj.var2 = randStr(7)
+
+
+        demoArr.push(demoObj)
     }
 
-    return demoMysqlArr;
-    
+    return demoArr;
+
 }
 
-console.log("demoArr: ----", generateDump())
+// console.log("demoArr: ----", generateDump())
 
 
+// // *** insert json to csv file ***
+// const jsonTocsv = async () => {
+//     let fields = ['Mobile', 'var1', 'var2'];
+//     let arrOfObject = generateDump()
+//     console.log("------arrOfObject-----", arrOfObject);
+//     let csv = parse(arrOfObject, { fields, header: true })
+//     fs.writeFile('./upload/add_contacts.csv', csv, (err) => {
+//         if (err) {
+//             console.log('error in writing csv file ', err);
+//         } else {
+//             console.log("File written successfully.");
+//         }
+//     })
+// }
 
+// jsonTocsv()
+
+// // *** convert json to xlsx file ***
+// const jsonToXlsx = () => {
+//     let arrOfObject = generateDump()
+//     let workbook = xlsx.utils.book_new();
+//     let worksheet = xlsx.utils.json_to_sheet(arrOfObject);
+//     xlsx.utils.book_append_sheet(workbook, worksheet, 'sheet1');
+//     xlsx.writeFile(workbook, './upload/add_contacts.xlsx')
+// }
+
+// jsonToXlsx()
 
 module.exports = {
     generateDump,
