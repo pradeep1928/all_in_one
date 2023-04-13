@@ -27,7 +27,7 @@ const generateDump = () => {
     let demoMysqlArr = [];
     let demoMongoArr = [];
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < 1000000; i++) {
         let demoObj = {}
         // *** api_mobile_list ***
         // demoObj.camp_id = randNum(1000000);
@@ -111,9 +111,15 @@ const generateDump = () => {
         // demoObj.username = randStr(15)
 
         // *** sms-ctrl xlsx file
-        demoObj.Mobile = randNum(9999999999)
-        demoObj.var1 = randStr(8)
-        demoObj.var2 = randStr(7)
+        // demoObj.Mobile = randNum(9999999999)
+        // demoObj.var1 = randStr(8)
+        // demoObj.var2 = randStr(7)
+
+
+        // *** bharat bank demo data
+        demoObj.branch = randNum(99999);
+        demoObj.mobile_no = randNum(999999999999)
+        demoObj.sms = randStr(40)
 
 
         demoArr.push(demoObj)
@@ -126,22 +132,24 @@ const generateDump = () => {
 // console.log("demoArr: ----", generateDump())
 
 
-// // *** insert json to csv file ***
-// const jsonTocsv = async () => {
-//     let fields = ['Mobile', 'var1', 'var2'];
-//     let arrOfObject = generateDump()
-//     console.log("------arrOfObject-----", arrOfObject);
-//     let csv = parse(arrOfObject, { fields, header: true })
-//     fs.writeFile('./upload/add_contacts.csv', csv, (err) => {
-//         if (err) {
-//             console.log('error in writing csv file ', err);
-//         } else {
-//             console.log("File written successfully.");
-//         }
-//     })
-// }
+// *** insert json to csv file ***
+const jsonTocsv = async () => {
+    let fields = ['branch', 'mobile_no', 'sms'];
+    let arrOfObject = generateDump()
+    console.log("------arrOfObject-----", arrOfObject);
+    let csv = parse(arrOfObject, { fields, header: true })
+    let psv = csv.split(",").join("|")
+    // console.log("----------csv----------> ", psv);
+    fs.writeFile('./upload/bharat.psv', psv, (err) => {
+        if (err) {
+            console.log('error in writing csv file ', err);
+        } else {
+            console.log("File written successfully.");
+        }
+    })
+}
 
-// jsonTocsv()
+jsonTocsv()
 
 // // *** convert json to xlsx file ***
 // const jsonToXlsx = () => {
