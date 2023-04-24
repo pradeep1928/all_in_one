@@ -15,12 +15,22 @@ function randStr(length) {
 }
 
 const randNum = (num) => {
-    const numresult = Math.floor(Math.random() * num)
-    return numresult
+    let numresult = Math.floor(Math.random() * num)
+        return numresult
 }
 
+const new_randNum = (num) => {
+    let numresult = Math.floor(Math.random() * num)
+    if (numresult.toString().length == 10) {
+        return numresult
+    } else if (numresult.toString().length < 10) {
+        return parseInt(1234567899)
+    }
+}
+
+
 console.log(randStr(15));
-console.log(randNum(10));
+console.log(new_randNum(9999999999));
 
 const generateDump = () => {
     let demoArr = []
@@ -111,15 +121,15 @@ const generateDump = () => {
         // demoObj.username = randStr(15)
 
         // *** sms-ctrl xlsx file
-        // demoObj.Mobile = randNum(9999999999)
-        // demoObj.var1 = randStr(8)
-        // demoObj.var2 = randStr(7)
+        demoObj.Mobile = new_randNum(9999999999)
+        demoObj.var1 = randStr(8)
+        demoObj.var2 = randStr(7)
 
 
         // *** bharat bank demo data
-        demoObj.branch = randNum(99999);
-        demoObj.mobile_no = randNum(999999999999)
-        demoObj.sms = randStr(40)
+        // demoObj.branch = randNum(99999);
+        // demoObj.mobile_no = randNum(9999999999)
+        // demoObj.sms = randStr(40)
 
 
         demoArr.push(demoObj)
@@ -133,34 +143,34 @@ const generateDump = () => {
 
 
 // *** insert json to csv file ***
-const jsonTocsv = async () => {
-    let fields = ['branch', 'mobile_no', 'sms'];
-    let arrOfObject = generateDump()
-    console.log("------arrOfObject-----", arrOfObject);
-    let csv = parse(arrOfObject, { fields, header: true })
-    let psv = csv.split(",").join("|")
-    // console.log("----------csv----------> ", psv);
-    fs.writeFile('./upload/bharat.psv', psv, (err) => {
-        if (err) {
-            console.log('error in writing csv file ', err);
-        } else {
-            console.log("File written successfully.");
-        }
-    })
-}
-
-jsonTocsv()
-
-// // *** convert json to xlsx file ***
-// const jsonToXlsx = () => {
+// const jsonTocsv = async () => {
+//     let fields = ['branch', 'mobile_no', 'sms'];
 //     let arrOfObject = generateDump()
-//     let workbook = xlsx.utils.book_new();
-//     let worksheet = xlsx.utils.json_to_sheet(arrOfObject);
-//     xlsx.utils.book_append_sheet(workbook, worksheet, 'sheet1');
-//     xlsx.writeFile(workbook, './upload/add_contacts.xlsx')
+//     console.log("------arrOfObject-----", arrOfObject);
+//     let csv = parse(arrOfObject, { fields, header: true })
+//     let psv = csv.split(",").join("|")
+//     // console.log("----------csv----------> ", psv);
+//     fs.writeFile('./upload/bharat.psv', psv, (err) => {
+//         if (err) {
+//             console.log('error in writing csv file ', err);
+//         } else {
+//             console.log("File written successfully.");
+//         }
+//     })
 // }
 
-// jsonToXlsx()
+// jsonTocsv()
+
+// *** convert json to xlsx file ***
+const jsonToXlsx = () => {
+    let arrOfObject = generateDump()
+    let workbook = xlsx.utils.book_new();
+    let worksheet = xlsx.utils.json_to_sheet(arrOfObject);
+    xlsx.utils.book_append_sheet(workbook, worksheet, 'sheet1');
+    xlsx.writeFile(workbook, './upload/add_contacts_new.xlsx')
+}
+
+jsonToXlsx()
 
 module.exports = {
     generateDump,

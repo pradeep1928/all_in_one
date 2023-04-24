@@ -51,22 +51,23 @@ let conn_test_1 = mysql.createPool(db_config1);
 // *** mysql insert query function ***
 const insertDataMysql = (data) => {
     return new Promise((resolve, reject) => {
-        query_camp_info = `insert into camp_info (id, camp_name, user_camp_name, merge_camp, username, password, sms_config, total_uploaded_contacts, total_contacts, total_blacklist_contacts, message, secondary_message, sender_id, is_unicode, status, camp_type, platform, user_id, rule_id, template_id, user_config_id, ssp_config_id, ssp_custom_param, sms_type, smpp_api_key, dnc_refund, primary_communication, secondary_communicaiton, dlt_template_id, rcs_template_id, is_archived, flash_message) values ?`
+        let query_camp_info = `insert into camp_info (id, camp_name, user_camp_name, merge_camp, username, password, sms_config, total_uploaded_contacts, total_contacts, total_blacklist_contacts, message, secondary_message, sender_id, is_unicode, status, camp_type, platform, user_id, rule_id, template_id, user_config_id, ssp_config_id, ssp_custom_param, sms_type, smpp_api_key, dnc_refund, primary_communication, secondary_communicaiton, dlt_template_id, rcs_template_id, is_archived, flash_message) values ?`
 
-        query_api_mobile_list = `insert into api_mobile_list (camp_id, api_id, message_id, destination, psn_json, message, shortcode, status, is_open, failed_reason, delivery_status) values ?`
+        let query_api_mobile_list = `insert into api_mobile_list (camp_id, api_id, message_id, destination, psn_json, message, shortcode, status, is_open, failed_reason, delivery_status) values ?`
     
-        query_api_info = `insert into api_info (id, camp_id, merchant_name, api_key, sms_config, custom_param_pattern, api_type, row_status, rate_limit, project_owner) values ?`
+        let query_api_info = `insert into api_info (id, camp_id, merchant_name, api_key, sms_config, custom_param_pattern, api_type, row_status, rate_limit, project_owner) values ?`
     
-        query_camp_mobile_list = `insert into camp_mobile_list (mobile, var1, var2) VALUES ? `
+        let query_camp_mobile_list = `insert into camp_mobile_list (mobile, var1, var2) VALUES ? `
         conn_test_1.query(query_camp_mobile_list, [data], (err, result) => {
             if (err) {
-               reject(err) 
+                console.log("🚀 ~ file: insertToDb.js:65 ~ conn_test_1.query ~ err:", err)
             }
            resolve(result)
         })
     
     })
 }
+
 
 
 // *** generating and inserting dump data into database ***
@@ -77,7 +78,6 @@ for (let i = 0; i < api_m_list.length; i++) {
     apiValArr.push(val)
 }
 
-console.log("------apiValArr------> ", apiValArr.length);
 const insert_to_db = async (arr) => {
     let chunkArr = []
     for (let i = 0; i < arr.length; i++) {
