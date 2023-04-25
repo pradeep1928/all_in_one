@@ -1,4 +1,5 @@
 const { getXlsxStream } = require("xlstream");
+const xlsx = require('xlsx'); 
 const mysql = require("mysql2");
 
 const db_config1 = {
@@ -39,7 +40,7 @@ const insertDataMysql = (data) => {
  * into a MySQL database.
  */
 async function xlsx_fileReading_1() {
-    var file_path = `/home/viva/Desktop/pradeep/All_in _one/all_in_one/dump_data_gen_inserting_in_db/upload/add_contacts_new.xlsx`
+    let file_path = `/home/viva/Desktop/pradeep/All_in _one/all_in_one/dump_data_gen_inserting_in_db/upload/add_contacts_new.xlsx`
     const stream = await getXlsxStream({
         filePath: file_path,
         sheet: 0,
@@ -77,4 +78,21 @@ async function xlsx_fileReading_1() {
 }
 
 
-xlsx_fileReading_1()
+// xlsx_fileReading_1()
+
+
+
+/**
+ * This function reads data from an Excel file and converts it into a JSON object using the xlsx
+ * library in JavaScript.
+ */
+function xlsx_fileReading_2 () {
+    let file_path = `/home/viva/Desktop/pradeep/All_in _one/all_in_one/dump_data_gen_inserting_in_db/upload/add_contacts_new.xlsx`
+    const workbook = xlsx.readFile(file_path);
+    let workbook_sheet = workbook.SheetNames;  
+    let workbook_response = xlsx.utils.sheet_to_json(workbook.Sheets[workbook_sheet[0]]);
+    console.log("🚀 ~ file: stream_and_insertTodb.js:89 ~ xlsx_fileReading_2 ~ workbook_response:", workbook_response)
+    
+}
+
+xlsx_fileReading_2()
