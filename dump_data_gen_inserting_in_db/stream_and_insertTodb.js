@@ -1,6 +1,8 @@
 const { getXlsxStream } = require("xlstream");
 const xlsx = require('xlsx'); 
 const mysql = require("mysql2");
+const excelToJson = require("convert-excel-to-json");
+const Transform = require('stream').Transform
 
 const db_config1 = {
     connectionLimit: 10,
@@ -87,12 +89,57 @@ async function xlsx_fileReading_1() {
  * library in JavaScript.
  */
 function xlsx_fileReading_2 () {
-    let file_path = `/home/viva/Desktop/pradeep/All_in _one/all_in_one/dump_data_gen_inserting_in_db/upload/add_contacts_new.xlsx`
+    let file_path = `/home/viva/Desktop/pradeep/All_in _one/all_in_one/dump_data_gen_inserting_in_db/upload/BILLING_STATEMENT_LIST_25-APR-2023.xls`
     const workbook = xlsx.readFile(file_path);
     let workbook_sheet = workbook.SheetNames;  
     let workbook_response = xlsx.utils.sheet_to_json(workbook.Sheets[workbook_sheet[0]]);
     console.log("🚀 ~ file: stream_and_insertTodb.js:89 ~ xlsx_fileReading_2 ~ workbook_response:", workbook_response)
-    
 }
 
-xlsx_fileReading_2()
+// xlsx_fileReading_2()
+
+
+async function xlsx_fileReading_3 () {
+    let file_path = `/home/viva/Desktop/pradeep/All_in _one/all_in_one/dump_data_gen_inserting_in_db/upload/BILLING_STATEMENT_LIST_25-APR-2023_new.xls`
+    const workbook = xlsx.readFile(file_path);
+    let workbook_sheet = workbook.Sheets[workbook.SheetNames[0]];  
+    const range = xlsx.utils.decode_range(workbook_sheet['!ref']);
+    range.s.r = 1;
+    // range.e.r = range.e.r - 1;
+    let workbook_response = xlsx.utils.sheet_to_json(workbook_sheet, {range});
+    console.log("🚀 ~ file: stream_and_insertTodb.js:89 ~ xlsx_fileReading_2 ~ workbook_response:", workbook_response)
+
+}
+
+// xlsx_fileReading_3();
+
+
+async function xlsx_fileReading_4 () {
+    let file_path = `/home/viva/Desktop/pradeep/All_in _one/all_in_one/dump_data_gen_inserting_in_db/upload/BILLING_STATEMENT_LIST_25-APR-2023_new.xls`
+    const excelData = excelToJson({
+        sourceFile: file_path,
+        // sheets: [{
+        //    name: 'Sheet1',
+        //     header:{
+        //         rows: 1
+        //     },    
+        //     columnToKey: {
+        //         '*': '{{columnHeader}}'
+        //     }
+        // }]
+        header:{
+            rows: 2
+        },
+        columnToKey: {
+            '*': '{{columnHeader}}'
+        },
+      });
+
+      let result = excelData
+      let final_values = Object.values(result)
+      console.log("🚀 ~ file: stream_and_insertTodb.js:170 ~ xlsx_fileReading_4 ~ values:", ...final_values)
+
+
+}
+
+// xlsx_fileReading_4()

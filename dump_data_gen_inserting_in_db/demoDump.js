@@ -37,7 +37,11 @@ const generateDump = () => {
     let demoMysqlArr = [];
     let demoMongoArr = [];
 
-    for (let i = 0; i < 1000000; i++) {
+    for (let i = 0; i < 700000; i++) {
+        // let number = new_randNum(9999999999)
+        // number = number.toString()
+        // fs.appendFileSync('./upload/test.txt', `${number}\n`)
+
         let demoObj = {}
         // *** api_mobile_list ***
         // demoObj.camp_id = randNum(1000000);
@@ -122,8 +126,13 @@ const generateDump = () => {
 
         // *** sms-ctrl xlsx file
         demoObj.Mobile = new_randNum(9999999999)
-        demoObj.var1 = randStr(8)
-        demoObj.var2 = randStr(7)
+        demoObj.var1 = randStr(30)
+        demoObj.var2 = randStr(30)
+        demoObj.var3 = randStr(30)
+        demoObj.var4 = randStr(30)
+        demoObj.var5 = randStr(30)
+        demoObj.var6 = randStr(30)
+        demoObj.var7 = randStr(30)
 
 
         // *** bharat bank demo data
@@ -139,8 +148,8 @@ const generateDump = () => {
 
 }
 
-// console.log("demoArr: ----", generateDump())
-
+// let arrObj = generateDump();
+// console.log('length of arrObj: ---> ', arrObj.length);
 
 // *** insert json to csv file ***
 // const jsonTocsv = async () => {
@@ -162,12 +171,18 @@ const generateDump = () => {
 // jsonTocsv()
 
 // *** convert json to xlsx file ***
-const jsonToXlsx = () => {
-    let arrOfObject = generateDump()
-    let workbook = xlsx.utils.book_new();
-    let worksheet = xlsx.utils.json_to_sheet(arrOfObject);
-    xlsx.utils.book_append_sheet(workbook, worksheet, 'sheet1');
-    xlsx.writeFile(workbook, './upload/add_contacts_new.xlsx')
+const jsonToXlsx = async () => {
+    console.log('inside jsonToXlsx');
+    try {
+        let arrOfObject = generateDump()
+        let workbook = xlsx.utils.book_new();
+        let worksheet = xlsx.utils.json_to_sheet(arrOfObject);
+        xlsx.utils.book_append_sheet(workbook, worksheet, 'sheet1');
+        xlsx.writeFile(workbook, './upload/test_7_7.xlsx')
+    
+    } catch (error) {
+        console.log("error in creating xlsx file: ", error);
+    }
 }
 
 jsonToXlsx()

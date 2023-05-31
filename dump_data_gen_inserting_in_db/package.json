@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "convert-excel-to-json": "^1.7.0",
     "json2csv": "^5.0.7",
     "moment": "^2.29.4",
     "mongodb": "^4.12.1",
