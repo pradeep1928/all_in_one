@@ -1,6 +1,8 @@
 const { parse } = require("json2csv");
 const xlsx = require('xlsx')
-const fs = require('fs')
+const fs = require('fs');
+const csv = require('csv-parser');
+
 
 
 
@@ -16,7 +18,7 @@ function randStr(length) {
 
 const randNum = (num) => {
     let numresult = Math.floor(Math.random() * num)
-        return numresult
+    return numresult
 }
 
 const new_randNum = (num) => {
@@ -37,7 +39,7 @@ const generateDump = () => {
     let demoMysqlArr = [];
     let demoMongoArr = [];
 
-    for (let i = 0; i < 700000; i++) {
+    for (let i = 0; i < 1000; i++) {
         // let number = new_randNum(9999999999)
         // number = number.toString()
         // fs.appendFileSync('./upload/test.txt', `${number}\n`)
@@ -125,20 +127,20 @@ const generateDump = () => {
         // demoObj.username = randStr(15)
 
         // *** sms-ctrl xlsx file
-        demoObj.Mobile = new_randNum(9999999999)
-        demoObj.var1 = randStr(30)
-        demoObj.var2 = randStr(30)
-        demoObj.var3 = randStr(30)
-        demoObj.var4 = randStr(30)
-        demoObj.var5 = randStr(30)
-        demoObj.var6 = randStr(30)
-        demoObj.var7 = randStr(30)
+        // demoObj.Mobile = new_randNum(9999999999)
+        // demoObj.var1 = randStr(30)
+        // demoObj.var2 = randStr(30)
+        // demoObj.var3 = randStr(30)
+        // demoObj.var4 = randStr(30)
+        // demoObj.var5 = randStr(30)
+        // demoObj.var6 = randStr(30)
+        // demoObj.var7 = randStr(30)
 
 
         // *** bharat bank demo data
-        // demoObj.branch = randNum(99999);
-        // demoObj.mobile_no = randNum(9999999999)
-        // demoObj.sms = randStr(40)
+        demoObj.branch = randNum(99999);
+        demoObj.mobile_no = randNum(9999999999)
+        demoObj.sms = randStr(40)
 
 
         demoArr.push(demoObj)
@@ -152,40 +154,94 @@ const generateDump = () => {
 // console.log('length of arrObj: ---> ', arrObj.length);
 
 // *** insert json to csv file ***
-// const jsonTocsv = async () => {
-//     let fields = ['branch', 'mobile_no', 'sms'];
-//     let arrOfObject = generateDump()
-//     console.log("------arrOfObject-----", arrOfObject);
-//     let csv = parse(arrOfObject, { fields, header: true })
-//     let psv = csv.split(",").join("|")
-//     // console.log("----------csv----------> ", psv);
-//     fs.writeFile('./upload/bharat.psv', psv, (err) => {
-//         if (err) {
-//             console.log('error in writing csv file ', err);
-//         } else {
-//             console.log("File written successfully.");
-//         }
-//     })
-// }
+const jsonTocsv = async () => {
+    let fields = ['branch', 'mobile_no', 'sms'];
+    let arrOfObject = generateDump()
+    console.log("------arrOfObject-----", arrOfObject);
+    let csv = parse(arrOfObject, { fields, header: true })
+    // let psv = csv.split(",").join("|")
+    // console.log("----------csv----------> ", psv);
+    fs.writeFile('./upload/demo.csv', csv, (err) => {
+        if (err) {
+            console.log('error in writing csv file ', err);
+        } else {
+            console.log("File written successfully.");
+        }
+    })
+}
 
 // jsonTocsv()
 
 // *** convert json to xlsx file ***
-const jsonToXlsx = async () => {
-    console.log('inside jsonToXlsx');
+// const jsonToXlsx = async () => {
+//     console.log('inside jsonToXlsx');
+//     try {
+//         let arrOfObject = generateDump()
+//         let workbook = xlsx.utils.book_new();
+//         let worksheet = xlsx.utils.json_to_sheet(arrOfObject);
+//         xlsx.utils.book_append_sheet(workbook, worksheet, 'sheet1');
+//         xlsx.writeFile(workbook, './upload/test_7_7.xlsx')
+
+//     } catch (error) {
+//         console.log("error in creating xlsx file: ", error);
+//     }
+// }
+
+// jsonToXlsx()
+
+
+// *** read lines of csv file
+const readCsv = () => {
     try {
-        let arrOfObject = generateDump()
-        let workbook = xlsx.utils.book_new();
-        let worksheet = xlsx.utils.json_to_sheet(arrOfObject);
-        xlsx.utils.book_append_sheet(workbook, worksheet, 'sheet1');
-        xlsx.writeFile(workbook, './upload/test_7_7.xlsx')
-    
+        const filePath = './upload/demo.csv'
+        const stream = fs.createReadStream(filePath);
+        stream.on('data', (chunk) => {
+            const chunkStr = chunk.toString();
+            console.log(chunkStr)
+        })
+        stream.on('close', () => {
+            console.log('File reading completed.');
+        })
+        stream.on('error', (error) => {
+            console.error('Error occurred while reading the file:', error);
+        });
+
     } catch (error) {
-        console.log("error in creating xlsx file: ", error);
+        console.log('error in readCsv: ', error)
     }
 }
 
-jsonToXlsx()
+readCsv()
+
+
+
+// *** read csv file using csv-parser and readStream upto given lines
+// const filePath = './upload/demo.csv'
+// const linesToRead = 3;
+// let lineCount = 0;
+
+// const stream = fs.createReadStream(filePath)
+//   .pipe(csv())
+//   .on('data', (data) => {
+//     // Process each line of the CSV data here
+//     lineCount++;
+
+//     // Print or use the data as per your requirement
+//     console.log(data);
+
+//     // Check if the desired line count is reached
+//     if (lineCount === linesToRead) {
+//       // Stop reading the file
+//       stream.destroy();
+//     }
+//   })
+//   .on('end', () => {
+//     console.log('Finished reading the CSV file.');
+//   })
+//   .on('error', (error) => {
+//     console.error('Error occurred while reading the CSV file:', error);
+//   });
+
 
 module.exports = {
     generateDump,
