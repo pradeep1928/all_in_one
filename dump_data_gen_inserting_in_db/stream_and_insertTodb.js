@@ -1,5 +1,5 @@
 const { getXlsxStream } = require("xlstream");
-const xlsx = require('xlsx'); 
+const xlsx = require('xlsx');
 const mysql = require("mysql2");
 const excelToJson = require("convert-excel-to-json");
 const Transform = require('stream').Transform
@@ -29,13 +29,57 @@ const insertDataMysql = (data) => {
         conn_test_1.query(query_camp_mobile_list, [data], (err, result) => {
             if (err) {
                 reject(err)
+            } else {
+                resolve(result)
             }
-            resolve(result)
         })
 
     })
 }
 
+async function xlsx_fileReading() {
+    let file_path = `/var/www/html/helo_metal_template/landingpage/upload_files/add_cantacts1.xlsx`
+    const stream = await getXlsxStream({
+        filePath: file_path,
+        sheet: 0,
+    });
+    let flag = false;
+    let dataArr = []
+    stream.on('data', async (exlrow) => {
+        try {
+            let exlArr = exlrow.raw.arr;
+            if (flag) {
+                dataArr.push(exlArr);
+                if (dataArr.length == 1000) {
+                    stream.pause()
+                    console.log("🚀 ~ file: stream_and_insertTodb.js:52 ~ stream.on ~ dataArr.length:", dataArr.length)
+                    let res = await insertDataMysql(dataArr)
+                    console.log("🚀 ~ file: stream_and_insertTodb.js:53 ~ stream.on ~ res:", res.info)
+                    dataArr = []
+                    stream.resume()
+                }
+            } else {
+                headerArr = exlArr;
+                flag = true;
+            }
+
+        } catch (error) {
+            console.log('error in streaming: ', error)
+        }
+    })
+    stream.on('end', async () => {
+        console.log("in end process ------->");
+        if (dataArr.length) {
+            console.log("🚀 ~ file: stream_and_insertTodb.js:62 ~ stream.on ~ dataArr.length:", dataArr.length)
+            let res = await insertDataMysql(dataArr)
+            console.log("🚀 ~ file: test.js:58 ~ stream.on ~ res:", res.info)
+        }
+        console.log("end of process ------------> ");
+    })
+}
+
+
+xlsx_fileReading()
 
 /**
  * This function reads data from an Excel file, processes it in batches of 1000 rows, and inserts it
@@ -66,12 +110,12 @@ async function xlsx_fileReading_1() {
                     console.log("🚀 ~ file: test.js:41 ~ stream.on ~ res:", res)
                     smallArr = []
                 }
-        
+
             }
             if (smallArr.length > 0) {
                 let res = await insertDataMysql(smallArr)
                 console.log("🚀 ~ file: test.js:58 ~ stream.on ~ res:", res)
-            }    
+            }
         }
         console.log("end of process ------------> ");
         dataArr = []
@@ -84,14 +128,16 @@ async function xlsx_fileReading_1() {
 
 
 
+
+
 /**
  * This function reads data from an Excel file and converts it into a JSON object using the xlsx
  * library in JavaScript.
  */
-function xlsx_fileReading_2 () {
+function xlsx_fileReading_2() {
     let file_path = `/home/viva/Desktop/pradeep/All_in _one/all_in_one/dump_data_gen_inserting_in_db/upload/BILLING_STATEMENT_LIST_25-APR-2023.xls`
     const workbook = xlsx.readFile(file_path);
-    let workbook_sheet = workbook.SheetNames;  
+    let workbook_sheet = workbook.SheetNames;
     let workbook_response = xlsx.utils.sheet_to_json(workbook.Sheets[workbook_sheet[0]]);
     console.log("🚀 ~ file: stream_and_insertTodb.js:89 ~ xlsx_fileReading_2 ~ workbook_response:", workbook_response)
 }
@@ -99,14 +145,14 @@ function xlsx_fileReading_2 () {
 // xlsx_fileReading_2()
 
 
-async function xlsx_fileReading_3 () {
+async function xlsx_fileReading_3() {
     let file_path = `/home/viva/Desktop/pradeep/All_in _one/all_in_one/dump_data_gen_inserting_in_db/upload/BILLING_STATEMENT_LIST_25-APR-2023_new.xls`
     const workbook = xlsx.readFile(file_path);
-    let workbook_sheet = workbook.Sheets[workbook.SheetNames[0]];  
+    let workbook_sheet = workbook.Sheets[workbook.SheetNames[0]];
     const range = xlsx.utils.decode_range(workbook_sheet['!ref']);
     range.s.r = 1;
     // range.e.r = range.e.r - 1;
-    let workbook_response = xlsx.utils.sheet_to_json(workbook_sheet, {range});
+    let workbook_response = xlsx.utils.sheet_to_json(workbook_sheet, { range });
     console.log("🚀 ~ file: stream_and_insertTodb.js:89 ~ xlsx_fileReading_2 ~ workbook_response:", workbook_response)
 
 }
@@ -114,7 +160,11 @@ async function xlsx_fileReading_3 () {
 // xlsx_fileReading_3();
 
 
-async function xlsx_fileReading_4 () {
+/**
+ * This function reads data from an Excel file and converts it to JSON format using the excelToJson
+ * library.
+ */
+async function xlsx_fileReading_4() {
     let file_path = `/home/viva/Desktop/pradeep/All_in _one/all_in_one/dump_data_gen_inserting_in_db/upload/BILLING_STATEMENT_LIST_25-APR-2023_new.xls`
     const excelData = excelToJson({
         sourceFile: file_path,
@@ -127,19 +177,17 @@ async function xlsx_fileReading_4 () {
         //         '*': '{{columnHeader}}'
         //     }
         // }]
-        header:{
+        header: {
             rows: 2
         },
         columnToKey: {
             '*': '{{columnHeader}}'
         },
-      });
+    });
 
-      let result = excelData
-      let final_values = Object.values(result)
-      console.log("🚀 ~ file: stream_and_insertTodb.js:170 ~ xlsx_fileReading_4 ~ values:", ...final_values)
-
-
+    let result = excelData
+    let final_values = Object.values(result)
+    console.log("🚀 ~ file: stream_and_insertTodb.js:170 ~ xlsx_fileReading_4 ~ values:", ...final_values)
 }
 
 // xlsx_fileReading_4()

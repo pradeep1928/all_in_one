@@ -39,7 +39,7 @@ const generateDump = () => {
     let demoMysqlArr = [];
     let demoMongoArr = [];
 
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < 100000; i++) {
         // let number = new_randNum(9999999999)
         // number = number.toString()
         // fs.appendFileSync('./upload/test.txt', `${number}\n`)
@@ -127,9 +127,9 @@ const generateDump = () => {
         // demoObj.username = randStr(15)
 
         // *** sms-ctrl xlsx file
-        // demoObj.Mobile = new_randNum(9999999999)
-        // demoObj.var1 = randStr(30)
-        // demoObj.var2 = randStr(30)
+        demoObj.Mobile = new_randNum(9999999999)
+        demoObj.var1 = randStr(30)
+        demoObj.var2 = randStr(30)
         // demoObj.var3 = randStr(30)
         // demoObj.var4 = randStr(30)
         // demoObj.var5 = randStr(30)
@@ -138,9 +138,9 @@ const generateDump = () => {
 
 
         // *** bharat bank demo data
-        demoObj.branch = randNum(99999);
-        demoObj.mobile_no = randNum(9999999999)
-        demoObj.sms = randStr(40)
+        // demoObj.branch = randNum(99999);
+        // demoObj.mobile_no = randNum(9999999999)
+        // demoObj.sms = randStr(40)
 
 
         demoArr.push(demoObj)
@@ -155,7 +155,7 @@ const generateDump = () => {
 
 // *** insert json to csv file ***
 const jsonTocsv = async () => {
-    let fields = ['branch', 'mobile_no', 'sms'];
+    let fields = ['Mobile', 'var1', 'var2'];
     let arrOfObject = generateDump()
     console.log("------arrOfObject-----", arrOfObject);
     let csv = parse(arrOfObject, { fields, header: true })
@@ -170,7 +170,7 @@ const jsonTocsv = async () => {
     })
 }
 
-// jsonTocsv()
+jsonTocsv()
 
 // *** convert json to xlsx file ***
 // const jsonToXlsx = async () => {
@@ -211,36 +211,33 @@ const readCsv = () => {
     }
 }
 
-readCsv()
+// readCsv()
 
 
 
 // *** read csv file using csv-parser and readStream upto given lines
-// const filePath = './upload/demo.csv'
-// const linesToRead = 3;
-// let lineCount = 0;
+const filePath = './upload/demo.csv'
+const linesToRead = 3;
+let lineCount = 0;
 
-// const stream = fs.createReadStream(filePath)
-//   .pipe(csv())
-//   .on('data', (data) => {
-//     // Process each line of the CSV data here
-//     lineCount++;
+const stream = fs.createReadStream(filePath)
+  .pipe(csv())
+  .on('data', (data) => {
+    lineCount++;
+    console.log(data);
 
-//     // Print or use the data as per your requirement
-//     console.log(data);
-
-//     // Check if the desired line count is reached
-//     if (lineCount === linesToRead) {
-//       // Stop reading the file
-//       stream.destroy();
-//     }
-//   })
-//   .on('end', () => {
-//     console.log('Finished reading the CSV file.');
-//   })
-//   .on('error', (error) => {
-//     console.error('Error occurred while reading the CSV file:', error);
-//   });
+    // Check if the desired line count is reached
+    if (lineCount === linesToRead) {
+      // Stop reading the file
+      stream.pause();
+    }
+  })
+  .on('end', () => {
+    console.log('Finished reading the CSV file.');
+  })
+  .on('error', (error) => {
+    console.error('Error occurred while reading the CSV file:', error);
+  });
 
 
 module.exports = {
