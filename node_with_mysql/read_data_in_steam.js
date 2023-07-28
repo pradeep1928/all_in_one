@@ -14,19 +14,19 @@ const db_config1 = {
 let conn_test_1 = mysql.createPool(db_config1);
 
 const select_data_in_steam = (data) => {
-    let query_camp_mobile_list = `select * from vivaconnect.camp_mobile_list;`;
-    let insert_query = `insert into camp_mobile_list_dump (mobile, var1, var2) VALUES ?`;
+    const selectQuery  = `select mobile, var1, var2 from vivaconnect.camp_mobile_list;`;
+    const insertQuery  = `insert into camp_mobile_list_dump (mobile, var1, var2) VALUES ?`;
     let dataArr = [];
-    const stream = conn_test_1.query(query_camp_mobile_list).stream();
+    const stream = conn_test_1.query(selectQuery ).stream();
     stream
         .on("data", (rows) => {
-            delete rows.id;
+            // delete rows.id;
             // console.log('------table rows----------> ', rows)
             let row_data = Object.values(rows);
             dataArr.push(row_data);
             if (dataArr.length == 10) {
                 console.log('---- dataArr length ----> ', dataArr.length)
-                conn_test_1.query(insert_query, [dataArr], (err, result) => {
+                conn_test_1.query(insertQuery, [dataArr], (err, result) => {
                     if (err) {
                         console.log("Error in insrting chunk ", err);
                     } else {
@@ -39,7 +39,7 @@ const select_data_in_steam = (data) => {
         .on("end", () => {
             if (dataArr.length > 0) {
                 console.log('---- dataArr length ----> ', dataArr.length)
-                conn_test_1.query(insert_query, [dataArr], (err, result) => {
+                conn_test_1.query(insertQuery, [dataArr], (err, result) => {
                     if (err) {
                         console.log("Error in insrting chunk ", err);
                     } else {
