@@ -6,16 +6,43 @@ const fs = require('fs');
 const csv = require('csv-parser');
 const Transform = require('stream').Transform
 
+// const db_config1 = {
+//     connectionLimit: 10,
+//     host: "localhost",
+//     port: 3306,
+//     user: "root",
+//     password: "pradeep",
+//     database: "helo_prime",
+// };
+
+// home 
 const db_config1 = {
     connectionLimit: 10,
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "pradeep",
-    database: "helo_prime",
+    password: "pradeep1910M",
+    database: "vivaconnect",
 };
 
 let conn_test_1 = mysql.createPool(db_config1);
+
+function validate_num(numbers, arr) {
+    var regexp_digits = /^[0-9]{10}$/g;
+    numbers[0] = numbers[0].replace(/[\x00-\x1F\x80-\xFF]/g, "");
+    numbers[0] = numbers[0].slice(-10);
+    if (numbers[0] && !isNaN(numbers[0]) && numbers[0].length > 10) {
+        arr.push(numbers.slice(-10));
+    } else if (numbers[0] && numbers[0].length == 10) {
+        if (numbers[0].match(regexp_digits)) {
+            arr.push(numbers);
+        }
+    }/*else{
+            console.log('numbers missed : ', numbers[i]);
+        }*/
+    __logger.debug('Total filtered numbers : ', filtered_numbers.length);
+    return filtered_numbers;
+}
 
 
 /**
@@ -40,7 +67,9 @@ const insertDataMysql = (data) => {
 }
 
 async function xlsx_fileReading() {
-    let file_path = `/var/www/html/helo_metal_template/landingpage/upload_files/add_cantacts1.xlsx`
+    // let file_path = `/var/www/html/helo_metal_template/landingpage/upload_files/add_cantacts1.xlsx`;
+    let file_path = `./upload/test_50.xlsx`
+
     const stream = await getXlsxStream({
         filePath: file_path,
         sheet: 0,
@@ -53,7 +82,19 @@ async function xlsx_fileReading() {
         try {
             let exlArr = exlrow.raw.arr;
             if (flag) {
-                dataArr.push(exlArr);
+                console.log('======================> ', typeof exlArr[0])
+                var regexp_digits = /^[0-9]{10}$/g;
+                exlArr[0] = exlArr[0].toString().replace(/[\x00-\x1F\x80-\xFF]/g, "");
+                exlArr[0] = exlArr[0].slice(-10);
+                if (exlArr[0] && !isNaN(exlArr[0]) && exlArr[0].length > 10) {
+                    dataArr.push(exlArr.slice(-10));
+                } else if (exlArr[0] && exlArr[0].length == 10) {
+                    if (exlArr[0].match(regexp_digits)) {
+                        dataArr.push(exlArr);
+                    }
+                }
+
+                // dataArr.push(exlArr);
                 if (dataArr.length == 1000) {
                     if (parseInt(chunk_index) >= parseInt(last_chunk_index)) {
                         stream.pause()
@@ -210,34 +251,53 @@ async function xlsx_fileReading_4() {
 
 
 async function csv_reader() {
-    let filePath = `/var/www/html/helo_metal_template/landingpage/upload_files/demo.csv`
+    // let filePath = `/var/www/html/helo_metal_template/landingpage/upload_files/demo.csv`;
+    let filePath = `./upload/demo.csv`
+
     let flag = false
+    let dataArr = []
     const csvStream = csv({
         headers: true,
         ignoreEmpty: this
     })
 
     const stream = fs.createReadStream(filePath)
-    .pipe(csvStream)
+        .pipe(csvStream)
         .on('data', async (csvRow) => {
-            console.log("🚀 ~ file: stream_and_insertTodb.js:223 ~ .on ~ csvRow:", csvRow)
             const csvArray = Object.values(csvRow)
             console.log("🚀 ~ file: stream_and_insertTodb.js:221 ~ .on ~ csvArray:", csvArray)
 
             let a = {};
             if (flag) {
                 if (csvArray.length > 0) {
-                    csvArray.forEach(function (item, index) {
-                        let objKey = headerArray[index];
-                        a[objKey] = item;
-                    });
+                    var regexp_digits = /^[0-9]{10}$/g;
+                    let all_same_regex = /^0{10}$/;
+                    csvArray[0] = csvArray[0].replace(/[\x00-\x1F\x80-\xFF]/g, "");
+                    csvArray[0] = csvArray[0].slice(-10);
+                    if (csvArray[0] && !isNaN(csvArray[0]) && csvArray[0].length > 10 && !all_same_regex.test(csvArray[0])) {
+                        dataArr.push(csvArray.slice(-10));
+                    } else if (csvArray[0] && csvArray[0].length == 10 && !all_same_regex.test(csvArray[0])) {
+                        if (csvArray[0].match(regexp_digits)) {
+                            dataArr.push(csvArray);
+                        }
+                    }
+
+                    // csvArray.forEach(function (item, index) {
+                    //     let objKey = headerArray[index];
+                    //     a[objKey] = item;
+                    // });
+                }
+                if (dataArr.length == 10) {
+                    let res = await insertDataMysql(dataArr)
+                    console.log("🚀 ~ file: stream_and_insertTodb.js:53 ~ stream.on ~ res:", res.info)
+
                 }
             } else {
                 headerArray = csvArray;
                 flag = true;
             }
 
-            console.log("🚀 ~ file: stream_and_insertTodb.js:228 ~ .on ~ a:", a)
+            // console.log("🚀 ~ file: stream_and_insertTodb.js:228 ~ .on ~ a:", a)
 
         })
         .on('end', () => {
