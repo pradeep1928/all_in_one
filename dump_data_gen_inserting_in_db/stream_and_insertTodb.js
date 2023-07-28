@@ -62,7 +62,6 @@ const insertDataMysql = (data) => {
                 resolve(result)
             }
         })
-
     })
 }
 
