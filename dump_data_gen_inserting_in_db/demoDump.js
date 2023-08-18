@@ -2,9 +2,21 @@ const { parse } = require("json2csv");
 const xlsx = require('xlsx')
 const fs = require('fs');
 const csv = require('csv-parser');
+const randomstring = require('randomstring');
 
 
-
+//Function to generate a random email address
+function generateRandomEmail() {
+  const username = randomstring.generate({
+    length: 8,
+    charset: 'alphabetic'
+  });
+  const domain = randomstring.generate({
+    length: 4,
+    charset: 'alphabetic'
+  });
+  return `${username}@gmail.com`;
+}
 
 function randStr(length) {
     let strresult = '';
@@ -39,7 +51,7 @@ const generateDump = () => {
     let demoMysqlArr = [];
     let demoMongoArr = [];
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 10000; i++) {
         // let number = new_randNum(9999999999)
         // number = number.toString()
         // fs.appendFileSync('./upload/test.txt', `${number}\n`)
@@ -127,9 +139,9 @@ const generateDump = () => {
         // demoObj.username = randStr(15)
 
         // *** sms-ctrl xlsx file
-        demoObj.Mobile = new_randNum(9999999999)
-        demoObj.var1 = randStr(30)
-        demoObj.var2 = randStr(30)
+        // demoObj.Mobile = new_randNum(9999999999)
+        // demoObj.var1 = randStr(30)
+        // demoObj.var2 = randStr(30)
         // demoObj.var3 = randStr(30)
         // demoObj.var4 = randStr(30)
         // demoObj.var5 = randStr(30)
@@ -141,6 +153,10 @@ const generateDump = () => {
         // demoObj.branch = randNum(99999);
         // demoObj.mobile_no = randNum(9999999999)
         // demoObj.sms = randStr(40)
+
+        demoObj.username = randStr(10);
+        demoObj.mobile = new_randNum(9999999999)
+        demoObj.email = generateRandomEmail()
 
 
         demoArr.push(demoObj)
@@ -155,7 +171,7 @@ const generateDump = () => {
 
 // *** insert json to csv file ***
 const jsonTocsv = async () => {
-    let fields = ['Mobile', 'var1', 'var2'];
+    let fields = ['username', 'mobile', 'email'];
     let arrOfObject = generateDump()
     console.log("------arrOfObject-----", arrOfObject);
     let csv = parse(arrOfObject, { fields, header: true })
@@ -170,7 +186,7 @@ const jsonTocsv = async () => {
     })
 }
 
-// jsonTocsv()
+jsonTocsv()
 
 // *** convert json to xlsx file ***
 const jsonToXlsx = async () => {
@@ -187,7 +203,7 @@ const jsonToXlsx = async () => {
     }
 }
 
-jsonToXlsx()
+// jsonToXlsx()
 
 
 // *** read lines of csv file
