@@ -37,7 +37,7 @@ const __logger = winston.createLogger({
   transports: [
     new winston.transports.Console({ format: formatC }),
     new winston.transports.File({
-      filename: `log/monthly_mis-${date}.log`, format: formatF }),
+      filename: `log/newLog${date}.log`, format: formatF }),
   ],
   exceptionHandlers: [
     new winston.transports.Console({ format: formatC }),

@@ -13,4 +13,6 @@ function checkValidLen (input, minLen, maxLen) {
   }
 
 
-  console.log(checkValidLen('d34', 2, 5))
+  // console.log(checkValidLen('d34', 2, 5))
+
+  console.log('------', Math.floor(Math.random() * 3))

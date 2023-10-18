@@ -1,9 +1,10 @@
 const fs = require('fs');
+const { __logger } = require('./logger/index')
 
 function generateIndianMobileNumbers() {
   const numbers = [];
 
-  for (let i = 1; i <= 1000000; i++) {
+  for (let i = 1; i <= 100; i++) {
     const mobileNumber = getRandomMobileNumber();
     numbers.push(mobileNumber);
   }
@@ -12,9 +13,9 @@ function generateIndianMobileNumbers() {
 }
 
 function getRandomMobileNumber() {
-  const prefix = '9'; // Assuming all numbers start with '9' in India
+  const prefix = [9, 8, 7]; // Assuming all numbers start with '9' in India
   const remainingDigits = getRandomInt(10 ** 9, 10 ** 10 - 1);
-  const mobileNumber = prefix + remainingDigits.toString().padStart(9, '0');
+  const mobileNumber = prefix[Math.floor(Math.random() * prefix.length)] + remainingDigits.toString().padStart(9, '0');
   return mobileNumber;
 }
 
@@ -30,6 +31,7 @@ function saveNumbersToFile(numbers) {
       console.error('Error saving numbers to file:', err);
     } else {
       console.log('Mobile numbers saved to file successfully!');
+      __logger.info(`File created successfully contentLen: ${content.length}`)
     }
   });
 }
