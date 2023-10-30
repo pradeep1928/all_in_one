@@ -7,7 +7,7 @@ const lookUp_Op = async () => {
         let collection = database.collection("lookUpCol_1");
 
         const lookupPipeline = [
-            { $lookup: { from: "lookUpCol_2", localField: "playername", foreignField: "playername", as: "barcaInWorldXI" } }, { $match: { "barcaInWorldXI": { $ne: [] } } }, { $unwind: "$barcaInWorldXI"}
+            { $lookup: { from: "lookUpCol_2", localField: "playername", foreignField: "playername", as: "barcaInWorldXI" } }, { $match: { "barcaInWorldXI": { $ne: [] } } }, { $unwind: "$barcaInWorldXI" }, { $project: { _id: 0, playername: 1, country: 1, club: "$barcaInWorldXI.club" } }, { $replaceRoot: { newRoot: "$$ROOT" } }
         ]
 
         const lookupResult = await collection.aggregate(lookupPipeline).toArray();
